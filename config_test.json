@@ -1,0 +1,74 @@
+{
+  "algo": "apex",
+  "config": {
+    "gamma": 0.99,
+    "agent": {
+      "name": "SAC",
+      "config": {
+        "is_discrete": false,
+        "alpha": "auto",
+        "tau": 0.99,
+        "gradient_clipping": {
+          "soft-q-net": false,
+          "actor-net": false
+        }
+      },
+      "models": {
+        "soft-q-net": {
+          "model_class": "CnnContinuousQnetwork",
+          "model_parameters": {
+            "hidden_size": 256
+          }
+        },
+        "actor-net": {
+          "model_class": "CnnGaussianStochasticActorNetwork",
+          "model_parameters": {
+            "hidden_size": 256
+          }
+        }
+      },
+      "env": {
+        "name": "CarRacing-v0",
+        "pybullet": false,
+        "force_image": false,
+        "image_based": true,
+        "stacked_states": 1,
+        "max_steps": 10000,
+        "preprocessing": [
+          {
+            "name": "resize",
+            "parameters": {
+              "ratio": 0.75
+            }
+          },
+          {
+            "name": "color_to_grayscale",
+          }
+        ]
+      },
+      "learner": {
+        "device": "cuda",
+        "n_training_steps": 1000000,
+        "batch_size": 512,
+        "min_replay_size": 10000,
+        "params_update_freq": 500
+      },
+      "actors": {
+        "number_actors": 2,
+        "device": "cpu",
+        "local_buffer_size": 500,
+        "noise_generator": {
+          "name": "normal"
+        },
+        "noise_parameters": {
+          "std": [0.1, 0.5]
+        }
+      },
+      "prioritized_replay":
+      {
+        "max_size": 200000,
+        "alpha": 0.6
+      }
+    }
+  }
+}
